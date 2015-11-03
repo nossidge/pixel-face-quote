@@ -12,12 +12,12 @@ require_relative 'pixel-font/num_to_pic.rb'
 module Faces
 
 	def self.random_file(part_name)
-		files = Dir["face_imgs/#{part_name}_*.png"]
+		files = Dir["#{File.dirname(__FILE__)}/face_imgs/#{part_name}_*.png"]
 		files.sample
 	end
 
 	def self.new(filename)
-		base = ChunkyPNG::Image.from_file('face_imgs/base.png')
+		base = ChunkyPNG::Image.from_file(File.dirname(__FILE__)+'/face_imgs/base.png')
 		body = ChunkyPNG::Image.from_file random_file('body')
 		face = ChunkyPNG::Image.from_file random_file('face')
 		eyes = ChunkyPNG::Image.from_file random_file('eyes')

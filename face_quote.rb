@@ -46,7 +46,7 @@ font.text = text
 pixels_per_line = 1
 loop do
 	font.to_paragraph(pixels_per_line)
-	break if font.text.split("\n").length == lines
+	break if font.text.split("\n").length <= lines
 	break if font.text.split(' ').length  <  lines
 	pixels_per_line += 1
 end
