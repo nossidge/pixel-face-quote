@@ -18,7 +18,7 @@ module Faces
 		files.sample
 	end
 
-	def self.new(filename)
+	def self.new(filename, zoom=1)
 		base = ChunkyPNG::Image.from_file PATH + 'base.png'
 		body = ChunkyPNG::Image.from_file random_file('body')
 		face = ChunkyPNG::Image.from_file random_file('face')
@@ -34,6 +34,12 @@ module Faces
 		base.compose!(mout, 0, 0)
 		base.compose!(nose, 0, 0)
 		base.compose!(hair, 0, 0)
+		
+		# Zoom if necessary.
+		if zoom != 1
+			base.resample_nearest_neighbor!(base.width * zoom, base.height * zoom)
+		end
+		
 		base.save(filename)
 	end
 

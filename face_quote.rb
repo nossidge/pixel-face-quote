@@ -22,9 +22,12 @@ end
 ################################################################################
 
 # Simple handling of console input.
-filename_out = ARGV[0] ? ARGV[0] : 'filename.png'
-text = ARGV[1] ? ARGV[1] : 'Here is a witty quote.'
-lines = ARGV[2] ? ARGV[2].to_i : 2
+filename_out = ARGV[0] ? ARGV[0]      : 'filename.png'
+text         = ARGV[1] ? ARGV[1]      : 'Here is a witty quote.'
+lines        = ARGV[2] ? ARGV[2].to_i : 2
+zoom         = ARGV[3] ? ARGV[3].to_i : 1
+zoom_face    = ARGV[4] ? ARGV[4].to_i : 1
+zoom_speech  = ARGV[5] ? ARGV[5].to_i : 1
 
 ################################################################################
 
@@ -33,9 +36,7 @@ filename_face   = 'new_face.png'
 filename_speech = 'new_speech.png'
 
 # Make a new face.
-face_width  = 23
-face_height = 23
-Faces::new(filename_face)
+Faces::new(filename_face,zoom_face)
 
 # Make a new speech balloon.
 font = PixelFont.new
@@ -60,15 +61,19 @@ save_to_png(font.pixel_map,filename_speech)
 # Load back as ChunkyPNG::Image object.
 face   = ChunkyPNG::Image.from_file(filename_face)
 speech = ChunkyPNG::Image.from_file(filename_speech)
+speech.resample_nearest_neighbor!(zoom_speech * speech.width,
+                                  zoom_speech * speech.height)
 
 # Prepare composited canvas.
-x = font.map_width + face_width
-y = [font.map_height, face_height].max
+x = speech.width + face.width
+y = [speech.height, face.height].max
 png = ChunkyPNG::Image.new(x, y, ChunkyPNG::Color::TRANSPARENT)
 
 # Combine them.
-png.compose!(face, 0, y-face_height)
-png.compose!(speech, face_width, 0)
+png.compose!(face, 0, y-face.height)
+png.compose!(speech, face.width, 0)
+png.resample_nearest_neighbor!(zoom * png.width,
+                               zoom * png.height)
 png.save(filename_out, :interlace => true)
 
 # Kill temporary files.
